@@ -4,9 +4,14 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/item_model.dart';
+import './repository.dart';
 
-class NewsDbProvider {
+class NewsDbProvider implements Source, Cache {
   Database db;
+
+  NewsDbProvider() {
+    init();
+  }
 
   void init() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
@@ -37,6 +42,12 @@ class NewsDbProvider {
     );
   }
 
+  @override
+  Future<List<int>> fetchTopIds() {
+    return null;
+  }
+
+  @override
   Future<ItemModel> fetchItem(int id) async {
     final List<Map<String, dynamic>> maps = await db.query(
       'Items',
@@ -50,7 +61,10 @@ class NewsDbProvider {
     return null;
   }
 
+  @override
   Future<int> addItem(ItemModel item) {
     return db.insert('Items', item.toMap());
   }
 }
+
+final newsDbProvider = NewsDbProvider();
