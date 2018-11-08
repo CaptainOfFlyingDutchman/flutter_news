@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../blocs/stories_provider.dart';
 import '../models/item_model.dart';
+import '../widgets/loading_container.dart';
 
 class NewsListTile extends StatelessWidget {
   final int itemId;
@@ -14,14 +15,14 @@ class NewsListTile extends StatelessWidget {
       stream: bloc.items,
       builder: (BuildContext context, AsyncSnapshot<Map<int, Future<ItemModel>>> snapshot) {
         if (!snapshot.hasData) {
-          return Text('Stream is empty');
+          return LoadingContainer();
         }
 
         return FutureBuilder(
           future: snapshot.data[itemId],
           builder: (BuildContext context, AsyncSnapshot<ItemModel> itemSnapshot) {
             if (!itemSnapshot.hasData) {
-              return Text('Future is empty $itemId');
+              return LoadingContainer();
             }
 
             return buildTile(itemSnapshot.data);
