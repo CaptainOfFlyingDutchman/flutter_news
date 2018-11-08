@@ -6,18 +6,18 @@ class StoriesBloc {
   final Repository _repository = Repository();
 
   final PublishSubject<List<int>> _topIds = PublishSubject();
-  final BehaviorSubject<int> _items = BehaviorSubject<int>();
-
-  Observable<Map<int, Future<ItemModel>>> items;
+  final BehaviorSubject<Map<int, Future<ItemModel>>> _itemsOutput = BehaviorSubject<Map<int, Future<ItemModel>>>();
+  final PublishSubject<int> _itemsFetcher = PublishSubject<int>();
 
   // Getters to Streams
   Observable<List<int>> get topIds => _topIds.stream;
+  Observable<Map<int, Future<ItemModel>>> get items => _itemsOutput.stream;
 
   // Getters to Sinks
-  Function(int) get fetchItem => _items.sink.add;
+  Function(int) get fetchItem => _itemsFetcher.sink.add;
 
   StoriesBloc() {
-    items = _items.stream.transform(this._itemsTransformer());
+    _itemsFetcher.stream.transform(this._itemsTransformer()).pipe(_itemsOutput);
   }
 
   void fetchTopIds() async {
@@ -37,6 +37,7 @@ class StoriesBloc {
 
   void dispose() {
     _topIds.close();
-    _items.close();
+    _itemsOutput.close();
+    _itemsFetcher.close();
   }
 }
