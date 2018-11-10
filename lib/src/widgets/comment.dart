@@ -4,8 +4,9 @@ import '../models/item_model.dart';
 class Comment extends StatelessWidget {
   final int itemId;
   final Map<int, Future<ItemModel>> comments;
+  final int depth;
 
-  Comment({this.itemId, this.comments});
+  Comment({this.itemId, this.comments, this.depth});
 
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -21,6 +22,10 @@ class Comment extends StatelessWidget {
           ListTile(
             title: Text(item.text),
             subtitle: item.by == '' ? Text('Deleted') : Text(item.by),
+            contentPadding: EdgeInsets.only(
+              right: 16.0,
+              left: (depth + 1) * 16.0
+            ),
           ),
           Divider()
         ];
@@ -29,6 +34,7 @@ class Comment extends StatelessWidget {
           children.add(Comment(
             itemId: kidId,
             comments: comments,
+            depth: depth + 1,
           ));
         });
 
