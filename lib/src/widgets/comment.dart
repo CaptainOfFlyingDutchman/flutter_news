@@ -15,7 +15,16 @@ class Comment extends StatelessWidget {
           return Text('Loading comment.');
         }
 
-        return Text(snapshot.data.text);
+        final List<Widget> children = [Text(snapshot.data.text)];
+
+        snapshot.data.kids.forEach((kidId) {
+          children.add(Comment(
+            itemId: kidId,
+            comments: comments,
+          ));
+        });
+
+        return Column(children: children,);
       },
     );
   }
